@@ -2,7 +2,10 @@ let isFullscreenActive = false;
 let lastCanvasVideo = null;
 let playerUpdateInterval = null;
 let loadingTimeout = null;
+let isPlaying = true;
+let patternAnimationId = null;
 
+// create main player container
 function createFullscreenPlayer() {
     if (document.getElementById("fullscreen-player")) return;
 
@@ -14,21 +17,28 @@ function createFullscreenPlayer() {
         left: 0,
         width: "100vw",
         height: "100vh",
-        display: "none", 
+        display: "none",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         color: "white",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "'Montserrat', sans-serif",
         zIndex: 9999,
         overflow: "hidden",
         background: "#000"
     });
 
-    // spinner
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'stylesheet';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap';
+    document.head.appendChild(fontLink);
+
     const spinner = document.createElement("div");
     spinner.id = "fullscreen-spinner";
     spinner.className = "loading-spinner";
+
+    const patternOverlay = document.createElement("div");
+    patternOverlay.id = "pattern-overlay";
 
     const img = document.createElement("img");
     img.id = "fullscreen-cover";
@@ -47,10 +57,11 @@ function createFullscreenPlayer() {
     Object.assign(title.style, {
         marginTop: "20px",
         fontSize: "28px",
-        fontWeight: "bold",
+        fontWeight: "700",
         zIndex: 2,
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: "'Montserrat', sans-serif"
     });
 
     const artist = document.createElement("div");
@@ -64,10 +75,11 @@ function createFullscreenPlayer() {
         overflow: "hidden",
         textOverflow: "ellipsis",
         maxWidth: "90vw",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: "'Montserrat', sans-serif",
+        marginTop: "15px"
     });
 
-    // background blur
     const blurBg = document.createElement("div");
     blurBg.id = "fullscreen-blur-bg";
     Object.assign(blurBg.style, {
@@ -81,10 +93,11 @@ function createFullscreenPlayer() {
         filter: "blur(30px) brightness(0.4)",
         transform: "scale(1.2)",
         zIndex: 0,
-        transition: "opacity 1s ease-in-out, background-image 0.5s ease-in-out"
+        transition: "all 0.8s ease-in-out"
     });
 
     container.appendChild(blurBg);
+    container.appendChild(patternOverlay);
     container.appendChild(spinner);
     container.appendChild(img);
     container.appendChild(title);
@@ -92,6 +105,7 @@ function createFullscreenPlayer() {
     document.body.appendChild(container);
 }
 
+// extract color from image
 function getDominantColor(src, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -110,6 +124,94 @@ function getDominantColor(src, callback) {
     img.onerror = function() { callback("#000"); };
 }
 
+// animate background pattern
+function animatePattern() {
+    const overlay = document.getElementById('pattern-overlay');
+    if (!overlay) return;
+    
+    let time = Date.now() * 0.001;
+    const brightness = Math.sin(time * 0.2) * 0.05 + 0.95;
+    
+    // more obvious pattern for testing
+    const x1 = 50 + Math.sin(time * 0.1) * 25;
+    const y1 = 50 + Math.cos(time * 0.11) * 25;
+    const x2 = 50 + Math.sin(time * 0.12 + 2) * 25;
+    const y2 = 50 + Math.cos(time * 0.13 + 1) * 25;
+    
+    overlay.style.background = `radial-gradient(
+        circle at ${x1}% ${y1}%, 
+        rgba(255, 255, 255, 0.25), 
+        transparent 35%
+    ), 
+    radial-gradient(
+        circle at ${x2}% ${y2}%, 
+        rgba(255, 255, 255, 0.2), 
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at ${80 - x1}% ${90 - y2}%, 
+        rgba(255, 255, 255, 0.18), 
+        transparent 35%
+    ),
+    radial-gradient(
+        circle at ${20 + x2}% ${y1 - 10}%, 
+        rgba(255, 255, 255, 0.22), 
+        transparent 30%
+    )`;
+    
+    if (isFullscreenActive && isPlaying) {
+        patternAnimationId = requestAnimationFrame(animatePattern);
+    }
+}
+
+// check if music is playing or paused
+function updatePlayState() {
+    const playButton = document.querySelector('button[data-testid="control-button-playpause"]');
+    if (!playButton) return;
+    
+    const newPlayState = playButton.getAttribute('aria-label').toLowerCase().includes('play');
+    
+    if (isPlaying !== !newPlayState) {
+        isPlaying = !newPlayState;
+        const cover = document.getElementById('fullscreen-cover');
+        const title = document.getElementById('fullscreen-title');
+        const artist = document.getElementById('fullscreen-artist');
+        const blurBg = document.getElementById('fullscreen-blur-bg');
+        
+        if (cover && title && artist && blurBg) {
+            if (!isPlaying) {
+                // paused state
+                cover.style.transform = 'scale(0.95)';
+                cover.classList.add('monochrome80');
+                title.classList.add('lowopacity');
+                title.style.transform = 'scale(0.95) translateY(-10px)';
+                artist.classList.add('lowopacity');
+                artist.style.transform = 'scale(0.95) translateY(-10px)';
+                blurBg.classList.add('dimmed');
+                
+                if (patternAnimationId) {
+                    cancelAnimationFrame(patternAnimationId);
+                    patternAnimationId = null;
+                }
+            } else {
+                // playing state
+                cover.style.transform = 'scale(1)';
+                cover.classList.remove('monochrome80');
+                title.classList.remove('lowopacity');
+                title.style.transform = 'scale(1) translateY(0)';
+                artist.classList.remove('lowopacity');
+                artist.style.transform = 'scale(1) translateY(0)';
+                blurBg.classList.remove('dimmed');
+                
+                if (!patternAnimationId) {
+                    animatePattern();
+                }
+            }
+        }
+    }
+}
+
+// update fullscreen player with current song info
 function updateFullscreenPlayer() {
     if (!isFullscreenActive) return;
 
@@ -122,14 +224,14 @@ function updateFullscreenPlayer() {
     const fullscreenArtist = document.getElementById("fullscreen-artist");
     const container = document.getElementById("fullscreen-player");
     const blurBg = document.getElementById("fullscreen-blur-bg");
+    
+    updatePlayState();
 
     if(!coverHQ || !titleElem || !artistElem || !fullscreenCover) return;
 
-    // cover art and text
     if(fullscreenTitle.innerText !== titleElem.innerText) {
-        // animation logic
         fullscreenCover.style.opacity = "0";
-        fullscreenCover.style.transform = "scale(0.9) translateY(-20px)";
+        fullscreenCover.style.transform = isPlaying ? "scale(0.9) translateY(-20px)" : "scale(0.85) translateY(-20px)";
         fullscreenTitle.style.opacity = "0";
         fullscreenTitle.style.transform = "translateY(20px)";
         fullscreenArtist.style.opacity = "0";
@@ -139,18 +241,27 @@ function updateFullscreenPlayer() {
             fullscreenCover.src = coverHQ.src;
             fullscreenTitle.innerText = titleElem.innerText;
 
-            // clean artist text
             const artistTextClean = Array.from(artistElem.querySelectorAll('a'))
                 .map(a => a.textContent)
                 .join(', ');
             fullscreenArtist.innerText = artistTextClean;
 
-            // add blurred background
             blurBg.style.backgroundImage = `url(${coverHQ.src})`;
+            
+            // apply monochrome if paused
+            if (!isPlaying) {
+                fullscreenTitle.classList.add('monochrome');
+                fullscreenArtist.classList.add('monochrome');
+                blurBg.classList.add('dimmed');
+            } else {
+                fullscreenTitle.classList.remove('monochrome');
+                fullscreenArtist.classList.remove('monochrome');
+                blurBg.classList.remove('dimmed');
+            }
 
             setTimeout(() => {
                 fullscreenCover.style.opacity = "1";
-                fullscreenCover.style.transform = "scale(1) translateY(0)";
+                fullscreenCover.style.transform = isPlaying ? "scale(1) translateY(0)" : "scale(0.95) translateY(0)";
                 fullscreenTitle.style.opacity = "1";
                 fullscreenTitle.style.transform = "translateY(0)";
                 fullscreenArtist.style.opacity = "1";
@@ -159,7 +270,6 @@ function updateFullscreenPlayer() {
         }, 400);
     }
 
-    // canvas background
     if(canvasVideo && canvasVideo.parentElement !== container) {
         canvasVideo.style.position = "absolute";
         canvasVideo.style.top = "0";
@@ -174,48 +284,50 @@ function updateFullscreenPlayer() {
         container.insertBefore(canvasVideo, container.firstChild);
         lastCanvasVideo = canvasVideo;
         
-        // hide blur cover when video
         blurBg.style.opacity = "0";
     } else if (!canvasVideo && blurBg) {
-        // show blur cover when no video
         blurBg.style.opacity = "1";
     }
     
     document.title = "Spotify Live Player";
 }
 
+// enter fullscreen mode
 function enableFullscreen() {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
     }
 }
 
+// exit fullscreen mode
 function exitFullscreen() {
     if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {});
     }
 }
 
+// toggle fullscreen player on/off
 function toggleFullscreenMode() {
     const container = document.getElementById("fullscreen-player");
     const spinner = document.getElementById("fullscreen-spinner");
     
     if (isFullscreenActive) {
-        // deactivate fullscreen mode
         container.style.display = "none";
         exitFullscreen();
         if (playerUpdateInterval) {
             clearInterval(playerUpdateInterval);
             playerUpdateInterval = null;
         }
+        if (patternAnimationId) {
+            cancelAnimationFrame(patternAnimationId);
+            patternAnimationId = null;
+        }
         document.body.classList.remove("fullscreen-active");
         isFullscreenActive = false;
     } else {
-        // activate fullscreen mode
         container.style.display = "flex";
         enableFullscreen();
         
-        // loading spinner
         spinner.style.display = "block";
         const fullscreenCover = document.getElementById("fullscreen-cover");
         const fullscreenTitle = document.getElementById("fullscreen-title");
@@ -225,10 +337,11 @@ function toggleFullscreenMode() {
         fullscreenTitle.style.opacity = "0";
         fullscreenArtist.style.opacity = "0";
         
-        // hide spinner after content loads or timeout
         loadingTimeout = setTimeout(() => {
             spinner.style.display = "none";
             updateFullscreenPlayer();
+            
+            animatePattern();
             
             setTimeout(() => {
                 fullscreenCover.style.opacity = "1";
@@ -243,17 +356,16 @@ function toggleFullscreenMode() {
     }
 }
 
+// initialize extension
 function init() {
     createFullscreenPlayer();
     
-    // listen for Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isFullscreenActive) {
             toggleFullscreenMode();
         }
     });
     
-    // listen for messages from popup
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "toggleFullscreen") {
             toggleFullscreenMode();
@@ -264,7 +376,6 @@ function init() {
     });
 }
 
-// initialize when the page is ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
 } else {

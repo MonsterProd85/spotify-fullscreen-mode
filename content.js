@@ -1,7 +1,7 @@
-// Spotify Fullscreen Mode - Content Script
 let isFullscreenActive = false;
 let lastCanvasVideo = null;
 let playerUpdateInterval = null;
+let loadingTimeout = null;
 
 function createFullscreenPlayer() {
     if (document.getElementById("fullscreen-player")) return;
@@ -14,7 +14,7 @@ function createFullscreenPlayer() {
         left: 0,
         width: "100vw",
         height: "100vh",
-        display: "none",  // Start hidden, will be shown when activated
+        display: "none", 
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
@@ -25,6 +25,11 @@ function createFullscreenPlayer() {
         background: "#000"
     });
 
+    // spinner
+    const spinner = document.createElement("div");
+    spinner.id = "fullscreen-spinner";
+    spinner.className = "loading-spinner";
+
     const img = document.createElement("img");
     img.id = "fullscreen-cover";
     Object.assign(img.style, {
@@ -34,7 +39,7 @@ function createFullscreenPlayer() {
         borderRadius: "20px",
         boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
         zIndex: 2,
-        transition: "opacity 0.4s ease"
+        transition: "all 0.7s cubic-bezier(0.4, 0, 0.2, 1)"
     });
 
     const title = document.createElement("div");
@@ -44,7 +49,7 @@ function createFullscreenPlayer() {
         fontSize: "28px",
         fontWeight: "bold",
         zIndex: 2,
-        transition: "opacity 0.4s ease",
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
         textAlign: "center"
     });
 
@@ -53,7 +58,7 @@ function createFullscreenPlayer() {
     Object.assign(artist.style, {
         fontSize: "18px",
         opacity: "0.8",
-        transition: "opacity 0.4s ease",
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
         zIndex: 2,
         whiteSpace: "nowrap",
         overflow: "hidden",
@@ -62,27 +67,28 @@ function createFullscreenPlayer() {
         textAlign: "center"
     });
 
-    const exitButton = document.createElement("button");
-    exitButton.id = "fullscreen-exit";
-    exitButton.innerText = "Exit Fullscreen";
-    Object.assign(exitButton.style, {
+    // background blur
+    const blurBg = document.createElement("div");
+    blurBg.id = "fullscreen-blur-bg";
+    Object.assign(blurBg.style, {
         position: "absolute",
-        top: "20px",
-        right: "20px",
-        padding: "8px 16px",
-        background: "rgba(0,0,0,0.5)",
-        border: "none",
-        borderRadius: "4px",
-        color: "white",
-        cursor: "pointer",
-        zIndex: 3
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        filter: "blur(30px) brightness(0.4)",
+        transform: "scale(1.2)",
+        zIndex: 0,
+        transition: "opacity 1s ease-in-out, background-image 0.5s ease-in-out"
     });
-    exitButton.addEventListener("click", toggleFullscreenMode);
 
+    container.appendChild(blurBg);
+    container.appendChild(spinner);
     container.appendChild(img);
     container.appendChild(title);
     container.appendChild(artist);
-    container.appendChild(exitButton);
     document.body.appendChild(container);
 }
 
@@ -115,32 +121,45 @@ function updateFullscreenPlayer() {
     const fullscreenTitle = document.getElementById("fullscreen-title");
     const fullscreenArtist = document.getElementById("fullscreen-artist");
     const container = document.getElementById("fullscreen-player");
+    const blurBg = document.getElementById("fullscreen-blur-bg");
 
     if(!coverHQ || !titleElem || !artistElem || !fullscreenCover) return;
 
-    // Update cover and text
+    // cover art and text
     if(fullscreenTitle.innerText !== titleElem.innerText) {
+        // animation logic
         fullscreenCover.style.opacity = "0";
+        fullscreenCover.style.transform = "scale(0.9) translateY(-20px)";
         fullscreenTitle.style.opacity = "0";
+        fullscreenTitle.style.transform = "translateY(20px)";
         fullscreenArtist.style.opacity = "0";
+        fullscreenArtist.style.transform = "translateY(20px)";
 
         setTimeout(() => {
             fullscreenCover.src = coverHQ.src;
             fullscreenTitle.innerText = titleElem.innerText;
 
-            // Clean artist text
+            // clean artist text
             const artistTextClean = Array.from(artistElem.querySelectorAll('a'))
                 .map(a => a.textContent)
                 .join(', ');
             fullscreenArtist.innerText = artistTextClean;
 
-            fullscreenCover.style.opacity = "1";
-            fullscreenTitle.style.opacity = "1";
-            fullscreenArtist.style.opacity = "1";
-        }, 200);
+            // add blurred background
+            blurBg.style.backgroundImage = `url(${coverHQ.src})`;
+
+            setTimeout(() => {
+                fullscreenCover.style.opacity = "1";
+                fullscreenCover.style.transform = "scale(1) translateY(0)";
+                fullscreenTitle.style.opacity = "1";
+                fullscreenTitle.style.transform = "translateY(0)";
+                fullscreenArtist.style.opacity = "1";
+                fullscreenArtist.style.transform = "translateY(0)";
+            }, 50);
+        }, 400);
     }
 
-    // Canvas background (no animation)
+    // canvas background
     if(canvasVideo && canvasVideo.parentElement !== container) {
         canvasVideo.style.position = "absolute";
         canvasVideo.style.top = "0";
@@ -154,14 +173,14 @@ function updateFullscreenPlayer() {
         canvasVideo.style.display = "block";
         container.insertBefore(canvasVideo, container.firstChild);
         lastCanvasVideo = canvasVideo;
+        
+        // hide blur cover when video
+        blurBg.style.opacity = "0";
+    } else if (!canvasVideo && blurBg) {
+        // show blur cover when no video
+        blurBg.style.opacity = "1";
     }
-
-    // Fallback if no canvas
-    if(!canvasVideo && coverHQ) {
-        getDominantColor(coverHQ.src, color => {
-            container.style.background = color;
-        });
-    }
+    
     document.title = "Spotify Live Player";
 }
 
@@ -179,22 +198,47 @@ function exitFullscreen() {
 
 function toggleFullscreenMode() {
     const container = document.getElementById("fullscreen-player");
+    const spinner = document.getElementById("fullscreen-spinner");
     
     if (isFullscreenActive) {
-        // Deactivate fullscreen mode
+        // deactivate fullscreen mode
         container.style.display = "none";
         exitFullscreen();
         if (playerUpdateInterval) {
             clearInterval(playerUpdateInterval);
             playerUpdateInterval = null;
         }
+        document.body.classList.remove("fullscreen-active");
         isFullscreenActive = false;
     } else {
-        // Activate fullscreen mode
+        // activate fullscreen mode
         container.style.display = "flex";
         enableFullscreen();
-        updateFullscreenPlayer();
+        
+        // loading spinner
+        spinner.style.display = "block";
+        const fullscreenCover = document.getElementById("fullscreen-cover");
+        const fullscreenTitle = document.getElementById("fullscreen-title");
+        const fullscreenArtist = document.getElementById("fullscreen-artist");
+        
+        fullscreenCover.style.opacity = "0";
+        fullscreenTitle.style.opacity = "0";
+        fullscreenArtist.style.opacity = "0";
+        
+        // hide spinner after content loads or timeout
+        loadingTimeout = setTimeout(() => {
+            spinner.style.display = "none";
+            updateFullscreenPlayer();
+            
+            setTimeout(() => {
+                fullscreenCover.style.opacity = "1";
+                fullscreenTitle.style.opacity = "1";
+                fullscreenArtist.style.opacity = "1";
+            }, 100);
+        }, 1500);
+        
         playerUpdateInterval = setInterval(updateFullscreenPlayer, 1000);
+        document.body.classList.add("fullscreen-active");
         isFullscreenActive = true;
     }
 }
@@ -202,7 +246,14 @@ function toggleFullscreenMode() {
 function init() {
     createFullscreenPlayer();
     
-    // Listen for messages from popup
+    // listen for Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isFullscreenActive) {
+            toggleFullscreenMode();
+        }
+    });
+    
+    // listen for messages from popup
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "toggleFullscreen") {
             toggleFullscreenMode();
@@ -213,7 +264,7 @@ function init() {
     });
 }
 
-// Initialize when the page is ready
+// initialize when the page is ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
 } else {

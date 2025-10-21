@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Fullscreen Mode</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 300px;
+      padding: 15px;
+      color: #ffffff;
+      background-color: #191414;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      color: #1DB954;
+    }
+    .description {
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+    }
+    button {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1ed760;
+    }
+    .status {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: center;
+      font-style: italic;
+    }
+    .footer {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: center;
+      color: #b3b3b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img class="logo" src="icons/icon48.png" alt="Logo">
+    <h1>Spotify Fullscreen Mode</h1>
+  </div>
+  <div class="description">
+    Enhance your Spotify web player with a beautiful fullscreen experience.
+  </div>
+  <div class="button-container">
+    <button id="toggleButton">Enable Fullscreen Mode</button>
+  </div>
+  <div class="status" id="status">Status: Not active</div>
+  <div class="footer">
+    Works on open.spotify.com
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

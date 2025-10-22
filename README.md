@@ -86,7 +86,7 @@ spotify-videos-extension/
 ## 👏 Credits
 
 - Font: [Montserrat](https://fonts.google.com/specimen/Montserrat) by Google Fonts
-- Created by [MonsterProd85](https://github.com/MonsterProd85)
+- Created by [Antoine Rossi](https://github.com/Antoinenz) for [MonsterProd85](https://github.com/MonsterProd85)
 
 ---
 

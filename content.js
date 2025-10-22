@@ -294,8 +294,6 @@ function updateFullscreenPlayer() {
         //     lastCanvasVideo = null;
         // }
     }
-    
-    document.title = "spotify videos - playing";
 }
 
 // enter fullscreen mode

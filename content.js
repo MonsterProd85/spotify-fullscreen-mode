@@ -247,6 +247,7 @@ function updateFullscreenPlayer() {
             fullscreenArtist.innerText = artistTextClean;
 
             blurBg.style.backgroundImage = `url(${coverHQ.src})`;
+            blurBg.classList.add('background-cover');
             
             // apply monochrome if paused
             if (!isPlaying) {
@@ -270,26 +271,31 @@ function updateFullscreenPlayer() {
         }, 400);
     }
 
-    if(canvasVideo && canvasVideo.parentElement !== container) {
-        canvasVideo.style.position = "absolute";
-        canvasVideo.style.top = "0";
-        canvasVideo.style.left = "0";
-        canvasVideo.style.width = "100%";
-        canvasVideo.style.height = "100%";
-        canvasVideo.style.objectFit = "cover";
-        canvasVideo.style.filter = "blur(6px) brightness(0.5)";
-        canvasVideo.style.transform = "scale(1.05)";
-        canvasVideo.style.zIndex = "0";
-        canvasVideo.style.display = "block";
-        container.insertBefore(canvasVideo, container.firstChild);
-        lastCanvasVideo = canvasVideo;
-        
-        blurBg.style.opacity = "0";
-    } else if (!canvasVideo && blurBg) {
-        blurBg.style.opacity = "1";
+    // handle canvas video
+    if(canvasVideo) {
+        if(canvasVideo.parentElement !== container) {
+            canvasVideo.style.position = "absolute";
+            canvasVideo.style.top = "0";
+            canvasVideo.style.left = "0";
+            canvasVideo.style.width = "100%";
+            canvasVideo.style.height = "100%";
+            canvasVideo.style.objectFit = "cover";
+            canvasVideo.style.filter = "blur(6px) brightness(0.5)";
+            canvasVideo.style.transform = "scale(1.05)";
+            canvasVideo.style.zIndex = "1";
+            canvasVideo.style.display = "block";
+            container.insertBefore(canvasVideo, container.firstChild);
+            lastCanvasVideo = canvasVideo;
+        }
+    } else {
+        // no canvas video available
+        // if(lastCanvasVideo && lastCanvasVideo.parentNode) {
+        //     lastCanvasVideo.parentNode.removeChild(lastCanvasVideo);
+        //     lastCanvasVideo = null;
+        // }
     }
     
-    document.title = "Spotify Live Player";
+    document.title = "spotify videos - playing";
 }
 
 // enter fullscreen mode

@@ -13,8 +13,8 @@ A Chrome extension that transforms your Spotify Web Player into a beautiful full
 - **Beautiful Visuals**: Blurred album art background when no Canvas video is available
 - **Elegant Animations**: Smooth transitions between songs and play states
 - **Play/Pause Visual Effects**: 
-  - Album art slightly shrinks when paused
-  - Text becomes slightly monochrome
+  - Album art slightly shrinks when paused, and becomes slightly monochrome
+  - Text reacts accordingly with smooth animations
   - Background darkens
   - Ambient light patterns pause
 - **Minimal UI**: Hide cursor and use ESC key to exit fullscreen

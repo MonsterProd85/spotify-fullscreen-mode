@@ -41,9 +41,11 @@ A Chrome extension that transforms your Spotify Web Player into a beautiful full
 6. Press ESC key a second time to disable the extension
 
 ## 📷 Screenshots
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f6ff1a13-b4f8-479f-958e-efae97c8ac1f" />
-<img width="1920" height="998" alt="image" src="https://github.com/user-attachments/assets/c038c669-55a8-47e2-ad25-bf118508f700" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e87310f8-661b-4617-873a-e938e4a1223e" />
+<img width="1280" height="800" alt="screenshot1" src="https://github.com/user-attachments/assets/17829152-9c0c-4a95-aa14-eccf46f78711" />
+<img width="1280" height="800" alt="screenshot2" src="https://github.com/user-attachments/assets/1b70021e-b366-48e8-8ded-df50c169e452" />
+<img width="1280" height="800" alt="screenshot3" src="https://github.com/user-attachments/assets/e2fda56b-7206-4513-9deb-8528f44d2b00" />
+
+
 (screenshots may be out of sync, as we are making a lot of changes, and don't update the screenshots often)
 
 ## ⌨️ Keyboard Controls
@@ -76,6 +78,10 @@ spotify-videos-extension/
 ## 📄 License
 
 [MIT License](LICENSE) - Feel free to use and modify for your own projects.
+
+## ✋ Privacy
+
+[Privacy Policy](https://github.com/MonsterProd85/spotify-fullscreen-mode/blob/main/privacy.md) - We don't store or collect any data. Everything is open source, and proccesed locally on your machine
 
 ## 👏 Credits
 

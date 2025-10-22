@@ -45,8 +45,7 @@ A Chrome extension that transforms your Spotify Web Player into a beautiful full
 <img width="1280" height="800" alt="screenshot2" src="https://github.com/user-attachments/assets/1b70021e-b366-48e8-8ded-df50c169e452" />
 <img width="1280" height="800" alt="screenshot3" src="https://github.com/user-attachments/assets/e2fda56b-7206-4513-9deb-8528f44d2b00" />
 
-
-(screenshots may be out of sync, as we are making a lot of changes, and don't update the screenshots often)
+(Screenshots may not always be up to date. These are the screenshots for the offical Chrome Webstore release)
 
 ## ⌨️ Keyboard Controls
 

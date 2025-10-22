@@ -294,6 +294,7 @@ function updateFullscreenPlayer() {
         //     lastCanvasVideo = null;
         // }
     }
+    document.title = "Spotify Live Player"
 }
 
 // enter fullscreen mode

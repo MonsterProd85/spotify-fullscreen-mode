@@ -6,4 +6,4 @@ The extension only accesses information already visible on the Spotify Web Playe
 
 No information is sent to any server or third party. All processing happens locally in your browser.
 
-For questions or concerns about this privacy policy, please create an issue on the GitHub repository.
+For questions or concerns about this privacy policy, please create an issue on [this GitHub repository](https://github.com/MonsterProd85/spotify-fullscreen-mode).

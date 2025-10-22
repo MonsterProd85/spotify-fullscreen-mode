@@ -80,7 +80,7 @@ spotify-videos-extension/
 
 ## ✋ Privacy
 
-[Privacy Policy](https://github.com/MonsterProd85/spotify-fullscreen-mode/blob/main/privacy.md) - We don't store or collect any data. Everything is open source, and proccesed locally on your machine.
+[Privacy Policy](privacy.md) - We don't store or collect any data. Everything is open source, and proccesed locally on your machine.
 
 ## 👏 Credits
 

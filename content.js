@@ -184,8 +184,10 @@ function updatePlayState() {
                 cover.style.transform = 'scale(0.95)';
                 cover.classList.add('monochrome80');
                 title.classList.add('lowopacity');
+                title.classList.add('textpause');
                 title.style.transform = 'scale(0.95) translateY(-10px)';
                 artist.classList.add('lowopacity');
+                artist.classList.add('textpause');
                 artist.style.transform = 'scale(0.95) translateY(-10px)';
                 blurBg.classList.add('dimmed');
                 
@@ -198,9 +200,11 @@ function updatePlayState() {
                 cover.style.transform = 'scale(1)';
                 cover.classList.remove('monochrome80');
                 title.classList.remove('lowopacity');
+                title.classList.remove('textpause');
                 title.style.transform = 'scale(1) translateY(0)';
-                artist.classList.remove('lowopacity');
                 artist.style.transform = 'scale(1) translateY(0)';
+                artist.classList.remove('lowopacity');
+                artist.classList.remove('textpause');
                 blurBg.classList.remove('dimmed');
                 
                 if (!patternAnimationId) {
@@ -230,14 +234,23 @@ function updateFullscreenPlayer() {
     if(!coverHQ || !titleElem || !artistElem || !fullscreenCover) return;
 
     if(fullscreenTitle.innerText !== titleElem.innerText) {
+        // start transition: fade + slight scale + add temporary blur on cover, title and artist
         fullscreenCover.style.opacity = "0";
         fullscreenCover.style.transform = isPlaying ? "scale(0.9) translateY(-20px)" : "scale(0.85) translateY(-20px)";
+        fullscreenCover.style.filter = "blur(12px)";
+
+        blurBg.style.filter = "blur(60px) brightness(0.35)";
+
         fullscreenTitle.style.opacity = "0";
         fullscreenTitle.style.transform = "translateY(20px)";
+        fullscreenTitle.classList.add('change-blur');
+
         fullscreenArtist.style.opacity = "0";
         fullscreenArtist.style.transform = "translateY(20px)";
+        fullscreenArtist.classList.add('change-blur');
 
         setTimeout(() => {
+            // swap content
             fullscreenCover.src = coverHQ.src;
             fullscreenTitle.innerText = titleElem.innerText;
 
@@ -249,22 +262,29 @@ function updateFullscreenPlayer() {
             blurBg.style.backgroundImage = `url(${coverHQ.src})`;
             blurBg.classList.add('background-cover');
             
-            // apply monochrome if paused
             if (!isPlaying) {
-                fullscreenTitle.classList.add('monochrome');
-                fullscreenArtist.classList.add('monochrome');
+                fullscreenTitle.classList.add('monochrome80');
+                fullscreenArtist.classList.add('monochrome80');
                 blurBg.classList.add('dimmed');
             } else {
-                fullscreenTitle.classList.remove('monochrome');
-                fullscreenArtist.classList.remove('monochrome');
+                fullscreenTitle.classList.remove('monochrome80');
+                fullscreenArtist.classList.remove('monochrome80');
                 blurBg.classList.remove('dimmed');
             }
 
+            // small delay to allow image/background to update, then ease blur back out
             setTimeout(() => {
                 fullscreenCover.style.opacity = "1";
                 fullscreenCover.style.transform = isPlaying ? "scale(1) translateY(0)" : "scale(0.95) translateY(0)";
+                fullscreenCover.style.filter = "blur(0px)";
+                blurBg.style.filter = isPlaying ? "blur(30px) brightness(0.4)" : "blur(30px) brightness(0.25)";
+
+                // remove temporary blur class so title/artist animate back to sharp
+                fullscreenTitle.classList.remove('change-blur');
                 fullscreenTitle.style.opacity = "1";
                 fullscreenTitle.style.transform = "translateY(0)";
+
+                fullscreenArtist.classList.remove('change-blur');
                 fullscreenArtist.style.opacity = "1";
                 fullscreenArtist.style.transform = "translateY(0)";
             }, 50);
@@ -289,10 +309,10 @@ function updateFullscreenPlayer() {
         }
     } else {
         // no canvas video available
-        // if(lastCanvasVideo && lastCanvasVideo.parentNode) {
-        //     lastCanvasVideo.parentNode.removeChild(lastCanvasVideo);
-        //     lastCanvasVideo = null;
-        // }
+        if(lastCanvasVideo && lastCanvasVideo.parentNode) {
+            lastCanvasVideo.parentNode.removeChild(lastCanvasVideo);
+            lastCanvasVideo = null;
+        }
     }
     document.title = "Spotify Live Player"
 }

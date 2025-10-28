@@ -57,14 +57,14 @@
   font-size: 28px;
   font-weight: 700;
   z-index: 2;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
 }
 
 #fullscreen-artist {
   font-size: 18px;
   opacity: 0.8;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 2;
   white-space: nowrap;
   overflow: hidden;
@@ -75,7 +75,9 @@
 }
 
 .monochrome80 {
-  filter: grayscale(40%);
+  filter: blur(0.7px);
+  /* filter: grayscale(40%); */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
 .lowopacity {
@@ -84,7 +86,11 @@
 
 .dimmed {
   filter: blur(30px) brightness(0.25) saturate(0.8);
-  filter: grayscale(70%);
+  filter: grayscale(40%);
+}
+
+.textpause {
+  filter: blur(1px);
 }
 
 .loading-spinner {
@@ -97,6 +103,10 @@
   position: absolute;
   z-index: 10;
   display: none;
+}
+
+.change-blur {
+  filter: blur(12px) !important;
 }
 
 @keyframes spin {

@@ -21,15 +21,19 @@ A Chrome extension that transforms your Spotify Web Player into a beautiful full
 
 ## 📥 Installation
 
-### Chrome Web Store
-*(Coming Soon)*
+### Chrome Web Store (stable, easy installion)
+Now available on the [Chrome Web Store](https://chromewebstore.google.com/detail/spotify-fullscreen-mode/dpgcbhnnlpdkhdcggpoiloapobdplcpg)
 
-### Manual Installation
+With this version, you'll have to wait longer for bug fixes and updates.
+
+### Manual Installation (latest version)
 1. [Download](https://github.com/MonsterProd85/spotify-videos-extension/archive/refs/heads/main.zip) or clone this repository
 2. Open Chrome and navigate to `chrome://extensions/`
 3. Enable "Developer mode" (toggle in the top-right corner)
 4. Click "Load unpacked" and select the extension directory
 5. The extension icon should appear in your browser toolbar
+
+With this version, you'll have to manually install bug fixes and updates, but you'll get them ealier.
 
 ## 🚀 Usage
 

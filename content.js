@@ -386,3 +386,19 @@ if (document.readyState === "loading") {
 } else {
     init();
 }
+
+let audio = null;
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === "play") {
+    if (!audio) {
+      audio = new Audio(msg.url);
+      audio.loop = true;
+    }
+    audio.play();
+    sendResponse({status: "playing"});
+  } else if (msg.action === "pause") {
+    if (audio) audio.pause();
+    sendResponse({status: "paused"});
+  }
+});

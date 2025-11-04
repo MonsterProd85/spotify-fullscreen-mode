@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Test Spotify Fullscreen Mode",
-  "version": "1.9.3",
+  "name": "Spotify Fullscreen Mode",
+  "version": "1.9.2",
   "description": "Enhances Spotify Web Player with a beautiful fullscreen mode featuring album art and canvas videos",
   "icons": {
     "16": "icons/icon16.png",

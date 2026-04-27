@@ -89,7 +89,7 @@ spotify-videos-extension/
 ## 👏 Credits
 
 - Font: [Montserrat](https://fonts.google.com/specimen/Montserrat) by Google Fonts
-- Idea by [Hey Hey](https://github.com/heyheyyt)
+- Idea by [Alix](https://github.com/albc-h)
 - Created by [Antoine Rossi](https://github.com/Antoinenz) for [MonsterProd85](https://github.com/MonsterProd85)
 
 ---

@@ -1,8 +1,8 @@
 # Spotify Fullscreen Mode
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-80.1%25-yellow)](https://github.com/MonsterProd85/spotify-videos-extension)
-[![CSS](https://img.shields.io/badge/CSS-10.6%25-blue)](https://github.com/MonsterProd85/spotify-videos-extension)
-[![HTML](https://img.shields.io/badge/HTML-9.3%25-orange)](https://github.com/MonsterProd85/spotify-videos-extension)
+[![JavaScript](https://img.shields.io/badge/JavaScript-79.3%25-yellow)](https://github.com/MonsterProd85/spotify-videos-extension)
+[![CSS](https://img.shields.io/badge/CSS-11.2%25-blue)](https://github.com/MonsterProd85/spotify-videos-extension)
+[![HTML](https://img.shields.io/badge/HTML-9.5%25-orange)](https://github.com/MonsterProd85/spotify-videos-extension)
 
 A Chrome extension that transforms your Spotify Web Player into a beautiful fullscreen experience. Enjoy your music with enhanced visuals, including album artwork, dynamic backgrounds, and Spotify Canvas videos.
 
